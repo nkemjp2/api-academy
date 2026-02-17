@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
+import linkify from './linkify-it.js';
 import LESSONS from './data/lessons.js';
 import { useProgress } from './hooks/useProgress.js';
 import CodeBlock from './components/CodeBlock.jsx';
@@ -8,18 +9,33 @@ import appStyles from './App.module.css';
 
 /* ── Auto‑link helper ──────────────────────────────────────────── */
 function Linkify({ text }) {
-  const urlRegex = /(https?:\/\/[^\s,)]+)/g;
-  const parts = text.split(urlRegex);
-  return parts.map((part, i) => {
-    if (urlRegex.test(part)) {
-      urlRegex.lastIndex = 0;
-      return (
-        <a key={i} href={part} target="_blank" rel="noopener noreferrer"
-           className={appStyles.autoLink}>{part}</a>
-      );
+  if (!text) return null;
+  const linkify = require('./linkify-it.js').default();
+  const matches = linkify.match(text);
+  if (!matches) return <span>{text}</span>;
+  const result = [];
+  let lastIndex = 0;
+  matches.forEach((match) => {
+    if (match.index > lastIndex) {
+      result.push(<span key={lastIndex}>{text.slice(lastIndex, match.index)}</span>);
     }
-    return <span key={i}>{part}</span>;
+    result.push(
+      <a
+        key={match.index}
+        href={match.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={appStyles.autoLink}
+      >
+        {match.text}
+      </a>
+    );
+    lastIndex = match.lastIndex;
   });
+  if (lastIndex < text.length) {
+    result.push(<span key={lastIndex}>{text.slice(lastIndex)}</span>);
+  }
+  return result;
 }
 
 /* ── Markdown‑lite renderer ─────────────────────────────────────── */

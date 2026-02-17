@@ -1,21 +1,50 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './Challenge.module.css';
+import newLinkify from '../linkify-it.js';
+
+function isSafeUrl(url) {
+  try {
+    const u = new URL(url, 'http://dummy');
+    const allowed = ['http:', 'https:', 'mailto:', 'tel:'];
+    return allowed.includes(u.protocol);
+  } catch {
+    return false;
+  }
+}
 
 function StepText({ text }) {
-  const urlRegex = /(https?:\/\/[^\s,)]+)/g;
-  const parts = text.split(urlRegex);
-  return parts.map((part, i) => {
-    if (urlRegex.test(part)) {
-      urlRegex.lastIndex = 0;
-      return (
-        <a key={i} href={part} target="_blank" rel="noopener noreferrer"
-           className={styles.stepLink} onClick={(e) => e.stopPropagation()}>
-          {part}
+  if (!text) return <React.Fragment />;
+  const linkify = newLinkify();
+  const matches = linkify.match(text);
+  if (!matches) return <React.Fragment><span>{text}</span></React.Fragment>;
+  const result = [];
+  let lastIndex = 0;
+  matches.forEach((match) => {
+    if (match.index > lastIndex) {
+      result.push(<span key={lastIndex}>{text.slice(lastIndex, match.index)}</span>);
+    }
+    if (isSafeUrl(match.url)) {
+      result.push(
+        <a
+          key={match.index}
+          href={match.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles.stepLink}
+          onClick={e => e.stopPropagation()}
+        >
+          {match.text}
         </a>
       );
+    } else {
+      result.push(<span key={match.index}>{match.text}</span>);
     }
-    return <span key={i}>{part}</span>;
+    lastIndex = match.lastIndex;
   });
+  if (lastIndex < text.length) {
+    result.push(<span key={lastIndex}>{text.slice(lastIndex)}</span>);
+  }
+  return <React.Fragment>{result}</React.Fragment>;
 }
 
 export default function Challenge({ challenge, lessonId, completed, onComplete }) {

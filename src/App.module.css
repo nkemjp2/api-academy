@@ -206,7 +206,6 @@
 .blockBody {
   color: var(--text-secondary); font-size: 14.5px; line-height: 1.85;
   overflow-wrap: break-word;
-  word-break: break-word;
 }
 
 .richLine { margin: 5px 0; }
