@@ -13,6 +13,7 @@
     "@fontsource/jetbrains-mono": "^5.2.8",
     "@fontsource/sora": "^5.2.8",
     "jspdf": "^4.1.0",
+    "linkify-it": "^5.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
