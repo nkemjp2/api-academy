@@ -82,17 +82,11 @@
   text-decoration: line-through;
 }
 
+
 .checkbox {
   margin-top: 3px;
   accent-color: var(--accent-teal);
-  .urlWrapper:hover .copyUrlBtn {
-    opacity: 1;
-  }
-  .copyUrlBtn:focus,
-  .copyUrlBtn:focus-visible {
-    box-shadow: 0 0 0 2px var(--accent-cyan, #7ee8fa);
-    opacity: 1;
-  }
+}
 
 .stepText {
   color: var(--text-secondary);

@@ -104,12 +104,14 @@ body {
 
 /* Scrollbar */
 * {
-  scrollbar-width: thin;
-  scrollbar-color: var(--border) var(--bg-surface);
+  /* Custom scrollbars for Firefox (supported browsers only) */
+  scrollbar-width: thin; /* Not supported in Chrome <121, Safari, iOS Safari, Samsung Internet */
+  scrollbar-color: var(--border) var(--bg-surface); /* Not supported in Chrome <121, Safari, iOS Safari, Samsung Internet */
 }
 *::-webkit-scrollbar { width: 6px; height: 6px; }
 *::-webkit-scrollbar-track { background: var(--bg-surface); }
 *::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+/* Webkit fallback for Chrome, Safari, Edge, and Opera */
 *::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
 /* Focus visible */
