@@ -1,0 +1,95 @@
+:root {
+  --bg-deep: #080c14;
+  --bg-surface: #0d1117;
+  --bg-elevated: #161b22;
+  --bg-code: #0d1117;
+  --border: #21262d;
+  --border-subtle: #161b22;
+  --text-primary: #f0f6fc;
+  --text-secondary: #c9d1d9;
+  --text-tertiary: #8b949e;
+  --text-muted: #484f58;
+  --accent-teal: #06d6a0;
+  --accent-blue: #118ab2;
+  --accent-cyan: #7ee8fa;
+  --accent-amber: #f0a500;
+  --accent-purple: #c084fc;
+  --accent-red: #f85149;
+  --accent-orange: #f97316;
+  --font-display: 'Sora', system-ui, sans-serif;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-deep);
+  color: var(--text-secondary);
+  line-height: 1.6;
+  overflow: hidden;
+  height: 100vh;
+}
+
+#root {
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) var(--bg-surface);
+}
+*::-webkit-scrollbar { width: 6px; height: 6px; }
+*::-webkit-scrollbar-track { background: var(--bg-surface); }
+*::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+*::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* Focus visible */
+:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
+}
+
+button {
+  font-family: inherit;
+}
+
+/* Selection */
+::selection {
+  background: rgba(6, 214, 160, 0.25);
+  color: var(--text-primary);
+}
+
+/* Code syntax highlighting classes */
+.token-keyword { color: #ff7b72; }
+.token-string { color: #a5d6ff; }
+.token-comment { color: #8b949e; font-style: italic; }
+.token-function { color: #d2a8ff; }
+.token-number { color: #79c0ff; }
+.token-operator { color: #ff7b72; }
+.token-decorator { color: #ffa657; }
+.token-builtin { color: #79c0ff; }
+.token-classname { color: #ffa657; }
+.token-punctuation { color: #c9d1d9; }
+.token-sql-keyword { color: #ff7b72; font-weight: 600; }
+.token-sql-function { color: #d2a8ff; }
+.token-sql-string { color: #a5d6ff; }
+.token-sql-number { color: #79c0ff; }
+.token-sql-comment { color: #8b949e; font-style: italic; }
+.token-bash-command { color: #79c0ff; }
+.token-bash-flag { color: #ffa657; }
+.token-bash-comment { color: #8b949e; font-style: italic; }
+.token-bash-string { color: #a5d6ff; }
