@@ -68,8 +68,6 @@ function CopyUrlBtn({ url }) {
   );
 }
 
-}
-
 // StepText component declaration
 function StepText({ text }) {
   if (!text) return <React.Fragment />;
