@@ -1,6 +1,23 @@
 import { useState, useEffect } from 'react';
 import styles from './Challenge.module.css';
 
+function StepText({ text }) {
+  const urlRegex = /(https?:\/\/[^\s,)]+)/g;
+  const parts = text.split(urlRegex);
+  return parts.map((part, i) => {
+    if (urlRegex.test(part)) {
+      urlRegex.lastIndex = 0;
+      return (
+        <a key={i} href={part} target="_blank" rel="noopener noreferrer"
+           className={styles.stepLink} onClick={(e) => e.stopPropagation()}>
+          {part}
+        </a>
+      );
+    }
+    return <span key={i}>{part}</span>;
+  });
+}
+
 export default function Challenge({ challenge, lessonId, completed, onComplete }) {
   const [checked, setChecked] = useState(() => {
     try {
@@ -52,7 +69,7 @@ export default function Challenge({ challenge, lessonId, completed, onComplete }
               className={styles.checkbox}
             />
             <span className={styles.stepNum}>{i + 1}</span>
-            <span className={styles.stepText}>{step}</span>
+            <span className={styles.stepText}><StepText text={step} /></span>
           </label>
         ))}
       </div>

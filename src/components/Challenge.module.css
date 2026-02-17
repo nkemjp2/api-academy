@@ -104,6 +104,25 @@
   color: var(--text-secondary);
   font-size: 13.5px;
   line-height: 1.5;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  min-width: 0;
+}
+
+.stepLink {
+  color: var(--accent-cyan);
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(126, 232, 250, 0.3);
+  transition: all 0.15s;
+  word-break: break-all;
+}
+.stepLink:hover {
+  color: var(--accent-teal);
+  border-bottom-color: var(--accent-teal);
+}
+.stepDone .stepLink {
+  color: var(--text-muted);
+  border-bottom-color: transparent;
 }
 
 .progressTrack {
@@ -118,4 +137,11 @@
   background: linear-gradient(90deg, var(--accent-teal), var(--accent-blue));
   border-radius: 2px;
   transition: width 0.4s ease;
+}
+
+@media (max-width: 860px) {
+  .card { padding: 16px; margin: 16px 0; }
+  .step { gap: 8px; padding: 8px 10px; }
+  .stepText { font-size: 13px; }
+  .title { font-size: 16px; }
 }

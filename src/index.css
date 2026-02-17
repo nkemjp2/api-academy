@@ -67,6 +67,8 @@ button {
   font-family: inherit;
 }
 
+img { max-width: 100%; height: auto; }
+
 /* Selection */
 ::selection {
   background: rgba(6, 214, 160, 0.25);

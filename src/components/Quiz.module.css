@@ -126,3 +126,9 @@
 .retryBtn:hover {
   background: rgba(240, 165, 0, 0.1);
 }
+
+@media (max-width: 860px) {
+  .card { padding: 16px; }
+  .question { font-size: 15px; }
+  .option { padding: 12px 14px; font-size: 13.5px; }
+}

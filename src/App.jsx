@@ -6,6 +6,22 @@ import Quiz from './components/Quiz.jsx';
 import Challenge from './components/Challenge.jsx';
 import appStyles from './App.module.css';
 
+/* ── Auto‑link helper ──────────────────────────────────────────── */
+function Linkify({ text }) {
+  const urlRegex = /(https?:\/\/[^\s,)]+)/g;
+  const parts = text.split(urlRegex);
+  return parts.map((part, i) => {
+    if (urlRegex.test(part)) {
+      urlRegex.lastIndex = 0;
+      return (
+        <a key={i} href={part} target="_blank" rel="noopener noreferrer"
+           className={appStyles.autoLink}>{part}</a>
+      );
+    }
+    return <span key={i}>{part}</span>;
+  });
+}
+
 /* ── Markdown‑lite renderer ─────────────────────────────────────── */
 function RichText({ text }) {
   if (!text) return null;
@@ -19,7 +35,7 @@ function RichText({ text }) {
             return <strong key={j} className={appStyles.bold}>{part.slice(2, -2)}</strong>;
           if (part.startsWith('`') && part.endsWith('`'))
             return <code key={j} className={appStyles.inlineCode}>{part.slice(1, -1)}</code>;
-          return <span key={j}>{part}</span>;
+          return <Linkify key={j} text={part} />;
         })}
       </p>
     );
