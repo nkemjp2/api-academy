@@ -1,6 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styles from './Challenge.module.css';
 import newLinkify from '../linkify-it.js';
+
+// Hoist linkify instance to module scope (assumes newLinkify is stateless)
+const linkify = newLinkify();
+
 
 function isSafeUrl(url) {
   try {
@@ -12,9 +16,63 @@ function isSafeUrl(url) {
   }
 }
 
+// CopyUrlBtn component declaration
+function CopyUrlBtn({ url }) {
+  const [copied, setCopied] = useState(false);
+  const [error, setError] = useState(null);
+  const timeoutRef = useRef();
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
+
+  const handleCopy = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setError(null);
+    if (!navigator.clipboard) {
+      setError('Clipboard not supported');
+      return;
+    }
+    navigator.clipboard.writeText(url)
+      .then(() => {
+        setError(null);
+        setCopied(true);
+        timeoutRef.current = setTimeout(() => setCopied(false), 1500);
+      })
+      .catch(() => {
+        setError('Failed to copy');
+      });
+  };
+
+  return (
+    <button
+      type="button"
+      className={styles.copyUrlBtn}
+      onClick={handleCopy}
+      aria-label="Copy URL"
+    >
+      {copied ? (
+        <span className={styles.copiedTooltip}>Copied!</span>
+      ) : error ? (
+        <span className={styles.copiedTooltip} style={{ color: 'var(--accent-red)' }}>{error}</span>
+      ) : (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+        </svg>
+      )}
+    </button>
+  );
+}
+
+}
+
+// StepText component declaration
 function StepText({ text }) {
   if (!text) return <React.Fragment />;
-  const linkify = newLinkify();
   const matches = linkify.match(text);
   if (!matches) return <React.Fragment><span>{text}</span></React.Fragment>;
   const result = [];
@@ -25,16 +83,18 @@ function StepText({ text }) {
     }
     if (isSafeUrl(match.url)) {
       result.push(
-        <a
-          key={match.index}
-          href={match.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={styles.stepLink}
-          onClick={e => e.stopPropagation()}
-        >
-          {match.text}
-        </a>
+        <span key={match.index} className={styles.urlWrapper}>
+          <a
+            href={match.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.stepLink}
+            onClick={e => e.stopPropagation()}
+          >
+            {match.text}
+          </a>
+          <CopyUrlBtn url={match.url} />
+        </span>
       );
     } else {
       result.push(<span key={match.index}>{match.text}</span>);

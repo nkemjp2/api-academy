@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import styles from './Quiz.module.css';
 
-export default function Quiz({ quiz, lessonId, savedResult, onAnswer, onReset }) {
+export default function Quiz({ quiz, lessonId, savedResult, onAnswer, onReset, isReview }) {
   const [selected, setSelected] = useState(savedResult?.selectedIndex ?? null);
   const [answered, setAnswered] = useState(savedResult?.answered ?? false);
 
@@ -30,6 +30,11 @@ export default function Quiz({ quiz, lessonId, savedResult, onAnswer, onReset })
 
   return (
     <div className={styles.card}>
+      {isReview && !answered && (
+        <div className={styles.reviewBanner}>
+          {'\u{1F4DD}'} Review — this question is due for practice
+        </div>
+      )}
       <div className={styles.badge}>CHECKPOINT</div>
       <p className={styles.question}>{quiz.question}</p>
 

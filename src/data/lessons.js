@@ -456,6 +456,7 @@ Python reads almost like English. It's used by Google, Netflix, Instagram, Spoti
         type: 'code',
         title: 'Variables — Storing Information',
         language: 'python',
+        interactive: true,
         code: `# A variable is like a labelled box where you store things
 
 company_name = "Weorc Limited"     # Text (called a "string")
@@ -477,6 +478,7 @@ Naming convention: use **snake_case** (lowercase with underscores) for variables
         type: 'code',
         title: 'Lists & Dictionaries — Organising Data',
         language: 'python',
+        interactive: true,
         code: `# A LIST is like a shopping list — items in order
 fruits = ["apple", "banana", "mango"]
 print(fruits[0])    # Output: apple  (counting starts at 0!)
@@ -505,6 +507,7 @@ API responses are essentially lists of dictionaries: \`[{"name": "A"}, {"name": 
         type: 'code',
         title: 'Functions — Reusable Actions',
         language: 'python',
+        interactive: true,
         code: `# A function is a recipe — define it once, use it many times
 
 def calculate_late_fee(amount, days_overdue):
@@ -538,6 +541,7 @@ In API development, each endpoint (URL) calls a function to do its work. The fun
         type: 'code',
         title: 'Error Handling with Try/Except',
         language: 'python',
+        interactive: true,
         code: `# What happens if something goes wrong?
 # Without error handling, your program crashes.
 # With try/except, you catch the error and handle it gracefully.
@@ -604,6 +608,7 @@ This lesson teaches you to read errors like a mechanic reads dashboard warnings 
         type: 'code',
         title: 'Anatomy of a Python Traceback',
         language: 'python',
+        interactive: true,
         code: `# This code has a bug. Let's see what the error looks like:
 
 def get_customer_email(customer):

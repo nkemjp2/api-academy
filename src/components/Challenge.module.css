@@ -1,6 +1,6 @@
 .card {
-  background: linear-gradient(135deg, #0d1520, #111827);
-  border: 1px solid #1a3040;
+  background: linear-gradient(135deg, var(--bg-card-gradient-start, #0d1520), var(--bg-card-gradient-end, #111827));
+  border: 1px solid var(--border-challenge, #1a3040);
   border-radius: 16px;
   padding: 28px;
   margin: 24px 0;
@@ -66,7 +66,7 @@
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.15s;
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--bg-step);
   border: 1px solid transparent;
 }
 
@@ -85,25 +85,19 @@
 .checkbox {
   margin-top: 3px;
   accent-color: var(--accent-teal);
-  width: 16px;
-  height: 16px;
-  flex-shrink: 0;
-  cursor: pointer;
-}
-
-.stepNum {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-muted);
-  min-width: 16px;
-  font-family: var(--font-mono);
-  margin-top: 1px;
-}
+  .urlWrapper:hover .copyUrlBtn {
+    opacity: 1;
+  }
+  .copyUrlBtn:focus,
+  .copyUrlBtn:focus-visible {
+    box-shadow: 0 0 0 2px var(--accent-cyan, #7ee8fa);
+    opacity: 1;
+  }
 
 .stepText {
   color: var(--text-secondary);
-  font-size: 13.5px;
-  line-height: 1.5;
+  font-size: var(--content-font-size, 13.5px);
+  line-height: var(--content-line-height, 1.5);
   overflow-wrap: break-word;
   min-width: 0;
 }
@@ -122,6 +116,71 @@
 .stepDone .stepLink {
   color: var(--text-muted);
   border-bottom-color: transparent;
+}
+
+.urlWrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.copyUrlBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 2px;
+  border-radius: 4px;
+  opacity: 0;
+  transition: opacity 0.15s, color 0.15s, background 0.15s, box-shadow 0.15s;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+.urlWrapper:hover .copyUrlBtn,
+.copyUrlBtn:focus,
+.copyUrlBtn:focus-visible {
+  opacity: 1;
+}
+.copyUrlBtn:focus,
+.copyUrlBtn:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px var(--accent-cyan, #7ee8fa);
+}
+
+.urlWrapper:hover .copyUrlBtn {
+  opacity: 1;
+}
+
+.copyUrlBtn:hover {
+  color: var(--accent-cyan);
+  background: rgba(126, 232, 250, 0.1);
+}
+
+.copiedTooltip {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent-teal);
+  white-space: nowrap;
+  animation: fadeInOut 1.5s ease forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .copiedTooltip {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+@keyframes fadeInOut {
+  0%   { opacity: 0; }
+  15%  { opacity: 1; }
+  75%  { opacity: 1; }
+  100% { opacity: 0; }
 }
 
 .progressTrack {
@@ -143,4 +202,5 @@
   .step { gap: 8px; padding: 8px 10px; }
   .stepText { font-size: 13px; }
   .title { font-size: 16px; }
+  .copyUrlBtn { opacity: 1; }
 }

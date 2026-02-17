@@ -1,14 +1,25 @@
 .card {
-  background: #111827;
-  border: 1px solid #1e3a5f;
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
   border-radius: 16px;
   padding: 28px;
   margin: 24px 0;
 }
 
+.reviewBanner {
+  background: var(--bg-banner-warning, rgba(249, 115, 22, 0.1));
+  border: 1px solid var(--border-banner-warning, rgba(249, 115, 22, 0.25));
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: var(--accent-orange);
+  font-weight: 600;
+}
+
 .badge {
   display: inline-block;
-  background: #1e3a5f;
+  background: var(--bg-badge, #1e3a5f);
   padding: 4px 12px;
   border-radius: 20px;
   font-size: 11px;
@@ -63,13 +74,13 @@
 }
 
 .correct {
-  background: #0a3622 !important;
+  background: var(--bg-correct) !important;
   border-color: var(--accent-teal) !important;
   color: var(--accent-teal) !important;
 }
 
 .wrong {
-  background: #3d1114 !important;
+  background: var(--bg-wrong) !important;
   border-color: var(--accent-red) !important;
   color: var(--accent-red) !important;
 }
@@ -81,12 +92,12 @@
 }
 
 .feedbackCorrect {
-  background: #0a3622;
+  background: var(--bg-correct);
   border-left: 3px solid var(--accent-teal);
 }
 
 .feedbackWrong {
-  background: #1a1a2e;
+  background: var(--bg-feedback-wrong);
   border-left: 3px solid var(--accent-amber);
 }
 

@@ -10,7 +10,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 8px 16px;
-  background: #0a0e16;
+  background: var(--bg-code-header);
   border-bottom: 1px solid var(--border);
 }
 
@@ -21,6 +21,26 @@
   text-transform: uppercase;
   letter-spacing: 1px;
   font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.interactiveBadge {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #06d6a0;
+  background: rgba(6, 214, 160, 0.12);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .copyBtn {
@@ -40,9 +60,97 @@
   color: var(--text-primary);
 }
 
-.pre {
+.runBtn {
+  background: rgba(6, 214, 160, 0.15);
+  border: 1px solid rgba(6, 214, 160, 0.3);
+  color: #06d6a0;
+  padding: 4px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  transition: all 0.2s;
+}
+.runBtn:hover:not(:disabled) {
+  background: rgba(6, 214, 160, 0.25);
+  border-color: #06d6a0;
+}
+.runBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.tryItBtn {
+  background: rgba(126, 232, 250, 0.1);
+  border: 1px solid rgba(126, 232, 250, 0.3);
+  color: var(--accent-cyan);
+  padding: 4px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  transition: all 0.2s;
+}
+.tryItBtn:hover {
+  background: rgba(126, 232, 250, 0.2);
+  border-color: var(--accent-cyan);
+}
+.tryItActive {
+  background: rgba(126, 232, 250, 0.2);
+  border-color: var(--accent-cyan);
+}
+
+.resetBtn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  transition: all 0.2s;
+}
+.resetBtn:hover {
+  border-color: var(--text-tertiary);
+  color: var(--text-secondary);
+}
+
+.preWrapper {
+  position: relative;
+  display: flex;
   background: var(--bg-code);
-  color: #e6edf3;
+}
+
+.lineNumbers {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0 20px 16px;
+  min-width: 40px;
+  text-align: right;
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.75;
+  font-family: var(--font-mono);
+  -webkit-user-select: none;
+  user-select: none;
+  border-right: 1px solid var(--border);
+  padding-right: 12px;
+  flex-shrink: 0;
+}
+
+.codeArea {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.pre {
+  flex: 1;
+  background: transparent;
+  color: var(--text-primary);
   padding: 20px;
   overflow-x: auto;
   font-size: 13px;
@@ -51,6 +159,94 @@
   margin: 0;
   white-space: pre;
   tab-size: 4;
+  min-width: 0;
+}
+
+.editable {
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  color: transparent;
+  caret-color: var(--text-primary);
+  padding: 20px;
+  font-size: 13px;
+  line-height: 1.75;
+  font-family: var(--font-mono);
+  border: none;
+  outline: none;
+  resize: none;
+  white-space: pre;
+  tab-size: 4;
+  overflow: auto;
+  z-index: 1;
+}
+.editable::selection {
+  background: rgba(126, 232, 250, 0.2);
+}
+
+.scrollFade {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 40px;
+  background: linear-gradient(to right, transparent, var(--bg-code));
+  pointer-events: none;
+}
+
+/* ── Loading indicator ────────────────────── */
+.loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--bg-code);
+  border-top: 1px solid var(--border);
+  color: var(--accent-cyan);
+  font-size: 12px;
+  font-family: var(--font-mono);
+}
+
+.loadingDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-cyan);
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+/* ── Output panel ─────────────────────────── */
+.output {
+  border-top: 1px solid var(--border);
+  background: #0d1117;
+  padding: 14px 16px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.stdout {
+  color: #06d6a0;
+  font-size: 12px;
+  line-height: 1.6;
+  font-family: var(--font-mono);
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.stderr {
+  color: #f87171;
+  font-size: 12px;
+  line-height: 1.6;
+  font-family: var(--font-mono);
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-all;
 }
 
 @media (max-width: 768px) {
@@ -58,4 +254,15 @@
     font-size: 12px;
     padding: 16px;
   }
+  .editable {
+    font-size: 12px;
+    padding: 16px;
+  }
+  .lineNumbers {
+    font-size: 10px;
+    min-width: 28px;
+    padding: 16px 8px 16px 10px;
+  }
+  .headerActions { gap: 4px; }
+  .runBtn, .copyBtn, .resetBtn { font-size: 11px; padding: 3px 8px; }
 }

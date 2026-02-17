@@ -19,6 +19,58 @@
   --font-display: 'Sora', system-ui, sans-serif;
   --font-body: 'DM Sans', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+
+  /* Component-level */
+  --bg-card: #111827;
+  --bg-card-gradient-start: #0d1520;
+  --bg-card-gradient-end: #111827;
+  --border-card: #1e3a5f;
+  --border-challenge: #1a3040;
+  --bg-correct: #0a3622;
+  --bg-wrong: #3d1114;
+  --bg-feedback-wrong: #1a1a2e;
+  --bg-code-header: #0a0e16;
+  --bg-step: rgba(0, 0, 0, 0.2);
+  --bg-sidebar-progress: #1a1a2e;
+  --bg-badge: #1e3a5f;
+  --bg-banner-warning: rgba(249, 115, 22, 0.1);
+  --border-banner-warning: rgba(249, 115, 22, 0.25);
+}
+
+[data-theme="light"] {
+  --bg-deep: #f8f9fa;
+  --bg-surface: #ffffff;
+  --bg-elevated: #f0f1f3;
+  --bg-code: #f6f8fa;
+  --border: #d0d7de;
+  --border-subtle: #e8eaed;
+  --text-primary: #1f2328;
+  --text-secondary: #424a53;
+  --text-tertiary: #656d76;
+  --text-muted: #8b949e;
+  --accent-teal: #05a87a;
+  --accent-blue: #0969b2;
+  --accent-cyan: #0550ae;
+  --accent-amber: #bf8700;
+  --accent-purple: #8250df;
+  --accent-red: #cf222e;
+  --accent-orange: #bc4c00;
+
+  /* Component-level */
+  --bg-card: #ffffff;
+  --bg-badge: #dbeafe;
+  --bg-banner-warning: rgba(234, 88, 12, 0.1);
+  --border-banner-warning: rgba(234, 88, 12, 0.3);
+  --bg-card-gradient-start: #f8f9fb;
+  --bg-card-gradient-end: #ffffff;
+  --border-card: #d0d7de;
+  --border-challenge: #d0d7de;
+  --bg-correct: #dafbe1;
+  --bg-wrong: #ffebe9;
+  --bg-feedback-wrong: #fff8c5;
+  --bg-code-header: #f0f1f3;
+  --bg-step: rgba(0, 0, 0, 0.04);
+  --bg-sidebar-progress: #e8eaed;
 }
 
 *, *::before, *::after {
@@ -32,6 +84,9 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+html[data-fontsize="small"]  { --content-font-size: 13px;   --content-line-height: 1.7;  }
+html[data-fontsize="medium"] { --content-font-size: 14.5px; --content-line-height: 1.85; }
+html[data-fontsize="large"]  { --content-font-size: 16.5px; --content-line-height: 1.95; }
 
 body {
   font-family: var(--font-body);
@@ -95,3 +150,24 @@ img { max-width: 100%; height: auto; }
 .token-bash-flag { color: #ffa657; }
 .token-bash-comment { color: #8b949e; font-style: italic; }
 .token-bash-string { color: #a5d6ff; }
+
+/* Light mode token overrides */
+[data-theme="light"] .token-keyword { color: #cf222e; }
+[data-theme="light"] .token-string { color: #0a3069; }
+[data-theme="light"] .token-comment { color: #6e7781; }
+[data-theme="light"] .token-function { color: #8250df; }
+[data-theme="light"] .token-number { color: #0550ae; }
+[data-theme="light"] .token-operator { color: #cf222e; }
+[data-theme="light"] .token-decorator { color: #953800; }
+[data-theme="light"] .token-builtin { color: #0550ae; }
+[data-theme="light"] .token-classname { color: #953800; }
+[data-theme="light"] .token-punctuation { color: #24292f; }
+[data-theme="light"] .token-sql-keyword { color: #cf222e; }
+[data-theme="light"] .token-sql-function { color: #8250df; }
+[data-theme="light"] .token-sql-string { color: #0a3069; }
+[data-theme="light"] .token-sql-number { color: #0550ae; }
+[data-theme="light"] .token-sql-comment { color: #6e7781; }
+[data-theme="light"] .token-bash-command { color: #0550ae; }
+[data-theme="light"] .token-bash-flag { color: #953800; }
+[data-theme="light"] .token-bash-comment { color: #6e7781; }
+[data-theme="light"] .token-bash-string { color: #0a3069; }
