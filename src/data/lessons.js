@@ -1,6 +1,6 @@
 // =====================================================================
 // API ACADEMY — Complete Lesson Data (v2)
-// 18 lessons, 5 modules: Setup → Foundation → Database → Production → Capstone
+// 23 lessons, 5 modules: Setup → Foundation → Database → Production → Capstone
 // =====================================================================
 
 const LESSONS = [
@@ -1260,6 +1260,315 @@ The backslash \`\\\` at the end of a line means "this command continues on the n
           'Write automated tests for every endpoint',
           'Deploy to Railway with live MySQL',
           'Write a README with setup instructions and endpoint docs',
+        ] },
+    ],
+  },
+
+  // ─── Capstone 2: Task Management API ──────────────────────────────────
+  {
+    id: 'capstone-tasks',
+    module: 'Capstone',
+    title: 'Build a Task Management API',
+    icon: '📋',
+    readingTime: 5,
+    content: [
+      { type: 'concept', title: 'Project Overview', text: `Build a **project & task management API** — like a simplified Trello or Asana. Users create projects, add tasks to them, assign tasks to team members, and track progress through statuses.
+
+This capstone focuses on:
+✅ Multiple related tables (users, projects, tasks, assignments)
+✅ Many-to-many relationships (users ↔ projects)
+✅ Status workflows (todo → in_progress → review → done)
+✅ Role-based access (owner vs member)
+✅ Filtering by status, assignee, and due date
+✅ Aggregate queries for project dashboards` },
+      { type: 'realworld', title: 'Project Requirements', text: `**Auth**
+  POST /api/register — Create account
+  POST /api/login — Get JWT token
+
+**Projects**
+  GET /api/projects — List user's projects (paginated)
+  POST /api/projects — Create project (becomes owner)
+  GET /api/projects/:id — Project details + member list + task counts
+  POST /api/projects/:id/members — Add a member by email
+  DELETE /api/projects/:id/members/:user_id — Remove member (owner only)
+
+**Tasks**
+  GET /api/projects/:id/tasks — List tasks (?status=, ?assignee=, ?sort_by=due_date)
+  POST /api/projects/:id/tasks — Create task (title, description, due_date, priority)
+  PUT /api/tasks/:id — Update task details
+  PUT /api/tasks/:id/status — Move task (todo → in_progress → review → done)
+  PUT /api/tasks/:id/assign — Assign to a project member
+  DELETE /api/tasks/:id — Owner or assignee only
+
+**Dashboard**
+  GET /api/projects/:id/stats — Tasks by status, overdue count, member workloads` },
+      { type: 'code', title: 'Database Schema', language: 'sql',
+        code: `CREATE DATABASE IF NOT EXISTS task_api;\nUSE task_api;\n\nCREATE TABLE users (\n    id INT AUTO_INCREMENT PRIMARY KEY,\n    name VARCHAR(100) NOT NULL,\n    email VARCHAR(100) UNIQUE NOT NULL,\n    password_hash VARCHAR(255) NOT NULL,\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n);\n\nCREATE TABLE projects (\n    id INT AUTO_INCREMENT PRIMARY KEY,\n    name VARCHAR(150) NOT NULL,\n    description TEXT,\n    owner_id INT NOT NULL,\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n    FOREIGN KEY (owner_id) REFERENCES users(id)\n);\n\nCREATE TABLE project_members (\n    project_id INT NOT NULL,\n    user_id INT NOT NULL,\n    role ENUM('owner','member') DEFAULT 'member',\n    joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n    PRIMARY KEY (project_id, user_id),\n    FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,\n    FOREIGN KEY (user_id) REFERENCES users(id)\n);\n\nCREATE TABLE tasks (\n    id INT AUTO_INCREMENT PRIMARY KEY,\n    project_id INT NOT NULL,\n    title VARCHAR(200) NOT NULL,\n    description TEXT,\n    status ENUM('todo','in_progress','review','done') DEFAULT 'todo',\n    priority ENUM('low','medium','high','urgent') DEFAULT 'medium',\n    assignee_id INT,\n    due_date DATE,\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n    FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,\n    FOREIGN KEY (assignee_id) REFERENCES users(id) ON DELETE SET NULL\n);`,
+        explanation: `**project_members** is a junction table for the many-to-many relationship between users and projects. The composite PRIMARY KEY (project_id, user_id) prevents duplicates.\n\n**ON DELETE CASCADE** on tasks means deleting a project deletes its tasks. **ON DELETE SET NULL** on assignee_id means deleting a user sets their tasks to unassigned rather than deleting them.` },
+      { type: 'challenge', title: 'Capstone Checklist', description: 'Build the complete Task Management API:', steps: [
+          'Set up project structure with .env and config',
+          'Create the database and all 4 tables',
+          'Implement auth (register + login with JWT)',
+          'Build project CRUD — only members can access their projects',
+          'Build the member invitation system (add/remove by email)',
+          'Build task CRUD with status workflow validation (no skipping statuses)',
+          'Add task assignment — validate assignee is a project member',
+          'Build project stats endpoint with aggregate queries',
+          'Add filtering: ?status=, ?assignee=, ?priority=, ?overdue=true',
+          'Write tests for auth, projects, tasks, and permission checks',
+          'Deploy and test the live API',
+        ] },
+    ],
+  },
+
+  // ─── Capstone 3: Blog & CMS API ──────────────────────────────────────
+  {
+    id: 'capstone-blog',
+    module: 'Capstone',
+    title: 'Build a Blog & CMS API',
+    icon: '✍️',
+    readingTime: 5,
+    content: [
+      { type: 'concept', title: 'Project Overview', text: `Build a **content management system API** for a blog platform. Authors write posts, readers leave comments, and admins manage categories and moderate content.
+
+This capstone focuses on:
+✅ Role-based access control (admin, author, reader)
+✅ Content publishing workflow (draft → published)
+✅ Tag/category many-to-many relationships
+✅ Nested comments (replies to comments)
+✅ Full-text search across posts
+✅ Rate limiting and content moderation` },
+      { type: 'realworld', title: 'Project Requirements', text: `**Auth**
+  POST /api/register — Create reader account
+  POST /api/login — Get JWT token (includes role in payload)
+
+**Posts**
+  GET /api/posts — Published posts (paginated, ?category=, ?tag=, ?search=)
+  GET /api/posts/:slug — Single post with author info + comments
+  POST /api/posts — Create draft (authors/admins only)
+  PUT /api/posts/:id — Edit post (own posts or admin)
+  PUT /api/posts/:id/publish — Publish draft (own posts or admin)
+  DELETE /api/posts/:id — Soft delete (admin only)
+
+**Comments**
+  GET /api/posts/:id/comments — All comments for a post (threaded)
+  POST /api/posts/:id/comments — Add comment (authenticated users)
+  POST /api/comments/:id/reply — Reply to a comment
+  DELETE /api/comments/:id — Own comment or admin
+
+**Categories & Tags**
+  GET /api/categories — List all categories with post counts
+  POST /api/categories — Create category (admin only)
+  POST /api/posts/:id/tags — Add tags to a post (author/admin)
+
+**Admin**
+  GET /api/admin/users — List all users (admin only)
+  PUT /api/admin/users/:id/role — Change user role (admin only)` },
+      { type: 'code', title: 'Database Schema', language: 'sql',
+        code: `CREATE DATABASE IF NOT EXISTS blog_api;\nUSE blog_api;\n\nCREATE TABLE users (\n    id INT AUTO_INCREMENT PRIMARY KEY,\n    username VARCHAR(50) UNIQUE NOT NULL,\n    email VARCHAR(100) UNIQUE NOT NULL,\n    password_hash VARCHAR(255) NOT NULL,\n    role ENUM('reader','author','admin') DEFAULT 'reader',\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n);\n\nCREATE TABLE categories (\n    id INT AUTO_INCREMENT PRIMARY KEY,\n    name VARCHAR(50) UNIQUE NOT NULL,\n    slug VARCHAR(60) UNIQUE NOT NULL\n);\n\nCREATE TABLE posts (\n    id INT AUTO_INCREMENT PRIMARY KEY,\n    author_id INT NOT NULL,\n    category_id INT,\n    title VARCHAR(200) NOT NULL,\n    slug VARCHAR(220) UNIQUE NOT NULL,\n    body TEXT NOT NULL,\n    excerpt VARCHAR(300),\n    status ENUM('draft','published','archived') DEFAULT 'draft',\n    published_at TIMESTAMP NULL,\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n    FOREIGN KEY (author_id) REFERENCES users(id),\n    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL,\n    FULLTEXT INDEX ft_posts (title, body)\n);\n\nCREATE TABLE tags (\n    id INT AUTO_INCREMENT PRIMARY KEY,\n    name VARCHAR(30) UNIQUE NOT NULL\n);\n\nCREATE TABLE post_tags (\n    post_id INT NOT NULL,\n    tag_id INT NOT NULL,\n    PRIMARY KEY (post_id, tag_id),\n    FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,\n    FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE\n);\n\nCREATE TABLE comments (\n    id INT AUTO_INCREMENT PRIMARY KEY,\n    post_id INT NOT NULL,\n    user_id INT NOT NULL,\n    parent_id INT NULL,\n    body TEXT NOT NULL,\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n    FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,\n    FOREIGN KEY (user_id) REFERENCES users(id),\n    FOREIGN KEY (parent_id) REFERENCES comments(id) ON DELETE CASCADE\n);`,
+        explanation: `**Slug** is a URL-friendly version of the title ("my-first-post"). Use it in URLs instead of IDs for SEO.\n\n**FULLTEXT INDEX** enables MySQL's built-in search: \`WHERE MATCH(title, body) AGAINST('flask tutorial')\`.\n\n**parent_id** on comments creates a tree structure — a comment with parent_id = NULL is top-level, and replies point to their parent. This is called a **self-referencing foreign key**.` },
+      { type: 'challenge', title: 'Capstone Checklist', description: 'Build the complete Blog & CMS API:', steps: [
+          'Set up project with config, .env, and folder structure',
+          'Create the database and all 6 tables',
+          'Implement auth with roles (reader, author, admin)',
+          'Build post CRUD with slug generation and draft/publish workflow',
+          'Implement full-text search with MATCH...AGAINST',
+          'Build the comment system with threaded replies',
+          'Implement category and tag management (many-to-many)',
+          'Add role-based middleware (admin-only routes, author-only editing)',
+          'Add pagination, filtering by category/tag, and sorting by date',
+          'Write tests covering permissions (reader can\'t create posts, author can\'t delete others)',
+          'Deploy and document all endpoints in a README',
+        ] },
+    ],
+  },
+
+  // ─── Capstone 4: E-Commerce Product Catalog API ───────────────────────
+  {
+    id: 'capstone-ecommerce',
+    module: 'Capstone',
+    title: 'Build an E-Commerce API',
+    icon: '🛒',
+    readingTime: 5,
+    content: [
+      { type: 'concept', title: 'Project Overview', text: `Build a **product catalog and shopping cart API** for an online store. Customers browse products, add items to a cart, place orders, and leave reviews.
+
+This capstone focuses on:
+✅ Complex data relationships (products, categories, orders, order items)
+✅ Shopping cart management (add, update quantity, remove)
+✅ Order processing workflow (cart → placed → shipped → delivered)
+✅ Product reviews with aggregate ratings
+✅ Stock management and inventory checks
+✅ Price calculations with tax and discounts` },
+      { type: 'realworld', title: 'Project Requirements', text: `**Auth**
+  POST /api/register — Create customer account
+  POST /api/login — Get JWT token
+
+**Products**
+  GET /api/products — Browse products (paginated, ?category=, ?search=, ?min_price=, ?max_price=, ?sort_by=price)
+  GET /api/products/:id — Product detail + reviews + average rating
+  POST /api/products — Add product (admin only)
+  PUT /api/products/:id — Update product/stock (admin only)
+
+**Categories**
+  GET /api/categories — List categories with product counts
+  GET /api/categories/:id/products — Products in a category
+
+**Cart**
+  GET /api/cart — Current user's cart with item totals
+  POST /api/cart — Add item (product_id, quantity) — validate stock
+  PUT /api/cart/:item_id — Update quantity — validate stock
+  DELETE /api/cart/:item_id — Remove item
+
+**Orders**
+  POST /api/orders — Place order from cart (deducts stock, clears cart)
+  GET /api/orders — User's order history (paginated)
+  GET /api/orders/:id — Order details with items
+  PUT /api/orders/:id/status — Update status (admin only)
+
+**Reviews**
+  POST /api/products/:id/reviews — Leave a review (1-5 stars + text, one per product)
+  GET /api/products/:id/reviews — Reviews for a product (paginated)` },
+      { type: 'code', title: 'Database Schema', language: 'sql',
+        code: `CREATE DATABASE IF NOT EXISTS shop_api;\nUSE shop_api;\n\nCREATE TABLE users (\n    id INT AUTO_INCREMENT PRIMARY KEY,\n    name VARCHAR(100) NOT NULL,\n    email VARCHAR(100) UNIQUE NOT NULL,\n    password_hash VARCHAR(255) NOT NULL,\n    role ENUM('customer','admin') DEFAULT 'customer',\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n);\n\nCREATE TABLE categories (\n    id INT AUTO_INCREMENT PRIMARY KEY,\n    name VARCHAR(80) UNIQUE NOT NULL,\n    slug VARCHAR(90) UNIQUE NOT NULL\n);\n\nCREATE TABLE products (\n    id INT AUTO_INCREMENT PRIMARY KEY,\n    category_id INT,\n    name VARCHAR(200) NOT NULL,\n    description TEXT,\n    price DECIMAL(10,2) NOT NULL,\n    stock INT NOT NULL DEFAULT 0,\n    image_url VARCHAR(500),\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL\n);\n\nCREATE TABLE cart_items (\n    id INT AUTO_INCREMENT PRIMARY KEY,\n    user_id INT NOT NULL,\n    product_id INT NOT NULL,\n    quantity INT NOT NULL DEFAULT 1,\n    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n    UNIQUE KEY unique_cart_item (user_id, product_id),\n    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,\n    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE\n);\n\nCREATE TABLE orders (\n    id INT AUTO_INCREMENT PRIMARY KEY,\n    user_id INT NOT NULL,\n    total DECIMAL(10,2) NOT NULL,\n    status ENUM('placed','confirmed','shipped','delivered','cancelled') DEFAULT 'placed',\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n    FOREIGN KEY (user_id) REFERENCES users(id)\n);\n\nCREATE TABLE order_items (\n    id INT AUTO_INCREMENT PRIMARY KEY,\n    order_id INT NOT NULL,\n    product_id INT NOT NULL,\n    quantity INT NOT NULL,\n    unit_price DECIMAL(10,2) NOT NULL,\n    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,\n    FOREIGN KEY (product_id) REFERENCES products(id)\n);\n\nCREATE TABLE reviews (\n    id INT AUTO_INCREMENT PRIMARY KEY,\n    product_id INT NOT NULL,\n    user_id INT NOT NULL,\n    rating TINYINT NOT NULL CHECK (rating BETWEEN 1 AND 5),\n    body TEXT,\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n    UNIQUE KEY one_review_per_user (product_id, user_id),\n    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,\n    FOREIGN KEY (user_id) REFERENCES users(id)\n);`,
+        explanation: `**UNIQUE KEY (user_id, product_id)** on cart_items prevents duplicate entries — adding the same product again should update quantity instead.\n\n**order_items stores unit_price** at time of purchase. If the product price changes later, existing orders aren't affected.\n\n**CHECK (rating BETWEEN 1 AND 5)** enforces valid star ratings at the database level. The UNIQUE KEY on reviews ensures one review per user per product.` },
+      { type: 'challenge', title: 'Capstone Checklist', description: 'Build the complete E-Commerce API:', steps: [
+          'Set up project with config, .env, and folder structure',
+          'Create the database and all 7 tables',
+          'Implement auth with customer and admin roles',
+          'Build product CRUD with category filtering, price range, and search',
+          'Build the shopping cart (add, update quantity, remove, get total)',
+          'Implement order placement — validate stock, deduct stock, clear cart (use a transaction!)',
+          'Build order history and detail endpoints',
+          'Implement the review system with average rating aggregation',
+          'Add stock validation: prevent adding out-of-stock items to cart',
+          'Write tests for the full purchase flow: browse → cart → order',
+          'Deploy and test with sample product data',
+        ] },
+    ],
+  },
+
+  // ─── Capstone 5: Expense Tracker API ──────────────────────────────────
+  {
+    id: 'capstone-expenses',
+    module: 'Capstone',
+    title: 'Build an Expense Tracker API',
+    icon: '💰',
+    readingTime: 5,
+    content: [
+      { type: 'concept', title: 'Project Overview', text: `Build a **personal and team expense tracker API**. Users log expenses, categorise them, set monthly budgets, and view spending reports with breakdowns.
+
+This capstone focuses on:
+✅ Financial data handling with DECIMAL precision
+✅ Date-range queries and monthly aggregations
+✅ Budget tracking with threshold alerts
+✅ Category-based spending breakdowns
+✅ CSV export for accounting
+✅ Aggregate SQL queries (SUM, AVG, GROUP BY, HAVING)` },
+      { type: 'realworld', title: 'Project Requirements', text: `**Auth**
+  POST /api/register — Create account
+  POST /api/login — Get JWT token
+
+**Categories**
+  GET /api/categories — List user's categories with monthly spend
+  POST /api/categories — Create custom category
+  PUT /api/categories/:id — Rename category
+  DELETE /api/categories/:id — Only if no expenses exist
+
+**Expenses**
+  GET /api/expenses — List expenses (paginated, ?category=, ?from=, ?to=, ?min=, ?max=)
+  POST /api/expenses — Log expense (amount, category, description, date)
+  PUT /api/expenses/:id — Edit own expense
+  DELETE /api/expenses/:id — Delete own expense
+
+**Budgets**
+  GET /api/budgets — List monthly budgets by category
+  POST /api/budgets — Set budget (category_id, month, limit_amount)
+  PUT /api/budgets/:id — Update budget limit
+  GET /api/budgets/alerts — Categories where spending exceeds 80% or 100% of budget
+
+**Reports**
+  GET /api/reports/monthly?month=2026-02 — Total spend, by-category breakdown, daily averages
+  GET /api/reports/trends — Month-over-month comparison (last 6 months)
+  GET /api/reports/export?from=&to= — Download expenses as CSV` },
+      { type: 'code', title: 'Database Schema', language: 'sql',
+        code: `CREATE DATABASE IF NOT EXISTS expense_api;\nUSE expense_api;\n\nCREATE TABLE users (\n    id INT AUTO_INCREMENT PRIMARY KEY,\n    name VARCHAR(100) NOT NULL,\n    email VARCHAR(100) UNIQUE NOT NULL,\n    password_hash VARCHAR(255) NOT NULL,\n    currency VARCHAR(3) DEFAULT 'GBP',\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n);\n\nCREATE TABLE categories (\n    id INT AUTO_INCREMENT PRIMARY KEY,\n    user_id INT NOT NULL,\n    name VARCHAR(50) NOT NULL,\n    icon VARCHAR(10),\n    UNIQUE KEY unique_user_category (user_id, name),\n    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE\n);\n\nCREATE TABLE expenses (\n    id INT AUTO_INCREMENT PRIMARY KEY,\n    user_id INT NOT NULL,\n    category_id INT NOT NULL,\n    amount DECIMAL(10,2) NOT NULL,\n    description VARCHAR(255),\n    expense_date DATE NOT NULL,\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,\n    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE RESTRICT,\n    INDEX idx_user_date (user_id, expense_date)\n);\n\nCREATE TABLE budgets (\n    id INT AUTO_INCREMENT PRIMARY KEY,\n    user_id INT NOT NULL,\n    category_id INT NOT NULL,\n    month CHAR(7) NOT NULL,\n    limit_amount DECIMAL(10,2) NOT NULL,\n    UNIQUE KEY unique_budget (user_id, category_id, month),\n    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,\n    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE\n);\n\n-- Seed default categories for new users:\n-- Food & Drink, Transport, Housing, Utilities, Entertainment,\n-- Shopping, Health, Education, Subscriptions, Other`,
+        explanation: `**INDEX idx_user_date** speeds up the most common query: "show my expenses for this month." Without an index, MySQL scans every row.\n\n**month as CHAR(7)** stores "2026-02" format for easy grouping. The UNIQUE KEY on budgets prevents duplicate budgets for the same category and month.\n\n**Categories are per-user** (user_id in categories table) so each user can customise their own. Seed default categories when a new user registers.` },
+      { type: 'challenge', title: 'Capstone Checklist', description: 'Build the complete Expense Tracker API:', steps: [
+          'Set up project with config, .env, and folder structure',
+          'Create the database and all 4 tables with indexes',
+          'Implement auth and seed default categories on registration',
+          'Build expense CRUD with date-range and category filtering',
+          'Build budget management with per-category monthly limits',
+          'Implement budget alerts — query expenses vs limits using SUM and GROUP BY',
+          'Build monthly report with category breakdown (SUM, AVG, GROUP BY)',
+          'Build trends endpoint comparing month-over-month totals',
+          'Implement CSV export using Python\'s csv module',
+          'Write tests for financial calculations (ensure DECIMAL precision)',
+          'Deploy and seed sample data for a demo',
+        ] },
+    ],
+  },
+
+  // ─── Capstone 6: Booking & Appointment API ────────────────────────────
+  {
+    id: 'capstone-booking',
+    module: 'Capstone',
+    title: 'Build a Booking System API',
+    icon: '📅',
+    readingTime: 5,
+    content: [
+      { type: 'concept', title: 'Project Overview', text: `Build an **appointment booking API** — like Calendly or a salon booking system. Providers set their availability, clients browse open slots and book appointments.
+
+This capstone focuses on:
+✅ Time-slot management and conflict detection
+✅ Two user types (provider vs client)
+✅ Date/time handling in MySQL and Python
+✅ Booking state machine (pending → confirmed → completed/cancelled)
+✅ Preventing double-bookings with database constraints
+✅ Availability windows and schedule generation` },
+      { type: 'realworld', title: 'Project Requirements', text: `**Auth**
+  POST /api/register — Create account (choose role: provider or client)
+  POST /api/login — Get JWT token
+
+**Services** (Provider)
+  GET /api/services — List all services (?provider=, ?category=)
+  POST /api/services — Create service (name, duration_minutes, price)
+  PUT /api/services/:id — Update service details
+  DELETE /api/services/:id — Only if no future bookings exist
+
+**Availability** (Provider)
+  GET /api/availability — Provider's weekly schedule
+  POST /api/availability — Set available hours (day_of_week, start_time, end_time)
+  PUT /api/availability/:id — Update a time window
+  DELETE /api/availability/:id — Remove a time window
+
+**Bookings** (Client & Provider)
+  GET /api/services/:id/slots?date=2026-03-15 — Available slots for a date
+  POST /api/bookings — Book a slot (service_id, date, start_time)
+  GET /api/bookings — My bookings (?status=, ?from=, ?to=)
+  PUT /api/bookings/:id/confirm — Provider confirms booking
+  PUT /api/bookings/:id/cancel — Cancel (client or provider, with reason)
+  PUT /api/bookings/:id/complete — Mark as completed (provider only)
+
+**Dashboard**
+  GET /api/provider/dashboard — Today's bookings, weekly summary, revenue totals` },
+      { type: 'code', title: 'Database Schema', language: 'sql',
+        code: `CREATE DATABASE IF NOT EXISTS booking_api;\nUSE booking_api;\n\nCREATE TABLE users (\n    id INT AUTO_INCREMENT PRIMARY KEY,\n    name VARCHAR(100) NOT NULL,\n    email VARCHAR(100) UNIQUE NOT NULL,\n    password_hash VARCHAR(255) NOT NULL,\n    role ENUM('provider','client') NOT NULL,\n    phone VARCHAR(20),\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n);\n\nCREATE TABLE services (\n    id INT AUTO_INCREMENT PRIMARY KEY,\n    provider_id INT NOT NULL,\n    name VARCHAR(150) NOT NULL,\n    description TEXT,\n    duration_minutes INT NOT NULL DEFAULT 60,\n    price DECIMAL(8,2) NOT NULL,\n    is_active BOOLEAN DEFAULT TRUE,\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n    FOREIGN KEY (provider_id) REFERENCES users(id)\n);\n\nCREATE TABLE availability (\n    id INT AUTO_INCREMENT PRIMARY KEY,\n    provider_id INT NOT NULL,\n    day_of_week TINYINT NOT NULL CHECK (day_of_week BETWEEN 0 AND 6),\n    start_time TIME NOT NULL,\n    end_time TIME NOT NULL,\n    FOREIGN KEY (provider_id) REFERENCES users(id) ON DELETE CASCADE\n);\n\nCREATE TABLE bookings (\n    id INT AUTO_INCREMENT PRIMARY KEY,\n    service_id INT NOT NULL,\n    client_id INT NOT NULL,\n    provider_id INT NOT NULL,\n    booking_date DATE NOT NULL,\n    start_time TIME NOT NULL,\n    end_time TIME NOT NULL,\n    status ENUM('pending','confirmed','completed','cancelled') DEFAULT 'pending',\n    cancel_reason VARCHAR(255),\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n    FOREIGN KEY (service_id) REFERENCES services(id),\n    FOREIGN KEY (client_id) REFERENCES users(id),\n    FOREIGN KEY (provider_id) REFERENCES users(id),\n    INDEX idx_provider_date (provider_id, booking_date)\n);\n\n-- Prevent double-bookings: check in application logic that no\n-- confirmed/pending booking overlaps the same provider + date + time range`,
+        explanation: `**day_of_week** uses 0=Monday through 6=Sunday. The availability table defines weekly recurring slots (e.g., "available Monday 9:00-17:00").\n\nThe **slots endpoint** generates available time windows by: (1) getting the provider's availability for that day of the week, (2) splitting into service-duration slots, (3) removing slots that overlap existing bookings.\n\n**Double-booking prevention** is the hardest part. Use a SQL query: \`SELECT * FROM bookings WHERE provider_id = %s AND booking_date = %s AND status IN ('pending','confirmed') AND start_time < %s AND end_time > %s\`. If any rows return, the slot is taken.` },
+      { type: 'challenge', title: 'Capstone Checklist', description: 'Build the complete Booking System API:', steps: [
+          'Set up project with config, .env, and folder structure',
+          'Create the database and all 4 tables',
+          'Implement auth with provider and client roles',
+          'Build service CRUD (providers manage their offerings)',
+          'Build availability management (weekly recurring schedule)',
+          'Implement the slot generation algorithm (available times for a given date)',
+          'Build booking creation with double-booking prevention',
+          'Implement booking status workflow (pending → confirmed → completed)',
+          'Build cancellation with reason tracking',
+          'Build provider dashboard with today\'s schedule and revenue stats',
+          'Write tests for the full flow: set availability → book slot → confirm → complete',
+          'Test edge cases: overlapping bookings, past dates, unavailable days',
         ] },
     ],
   },
